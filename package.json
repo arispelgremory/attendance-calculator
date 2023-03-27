@@ -1,16 +1,16 @@
 {
   "name": "attendance-calculator",
   "version": "1.0.0",
-  "homepage": "https://arispelgremory.github.io/attendance-calculator",
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vue-cli-service build && gh-pages -d dist",
+    "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit",
+    "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "serve": "^14.2.0",
     "vue": "^3.2.47"
   },
   "devDependencies": {
