@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 </script>
 
 <template>
@@ -8,43 +8,50 @@
 
     <div class="flex justify-between sm-container mx-auto w-3/5">
         <label for="coursename">Course Name:</label>
-        <input :value="coursename" type="text" class="w-3/5 border border-300 rounded-md" id="coursename" name="coursename">
+        <input v-on:input="inputChange" type="text" class="w-3/5 border border-300 rounded-md" id="coursename" name="coursename">
     </div>
 
     <div class="flex justify-between sm-container mx-auto w-3/5">
         <label for="lecturehour">Lecture Class Hour per Week:</label>
-        <input type="text" class="w-3/5 border border-300 rounded-md" id="lecturehour" name="lecturehour">
+        <input v-on:input="inputChange" type="text" class="w-3/5 border border-300 rounded-md" id="lecturehour" name="lecturehour">
     </div>
 
     <div class="flex justify-between sm-container mx-auto w-3/5">
         <label for="tutorialhour">Tutorial Class Hour per Week:</label>
-        <input type="text" class="w-3/5 border border-300 rounded-md" id="tutorialhour" name="tutorialhour">
+        <input v-on:input="inputChange" type="text" class="w-3/5 border border-300 rounded-md" id="tutorialhour" name="tutorialhour">
     </div>
 
     <div class="flex justify-between sm-container mx-auto w-3/5">
         <label for="practicalhour">Practical Class Hour per Week:</label>
-        <input type="text" class="w-3/5 border border-300 rounded-md" id="practicalhour" name="practicalhour">
+        <input v-on:input="inputChange" type="text" class="w-3/5 border border-300 rounded-md" id="practicalhour" name="practicalhour">
     </div>
     
     <div class="flex justify-between sm-container mx-auto w-3/5">
-        <label for="totalweek">Total Weeks:</label>
-        <input type="text" class="w-3/5 border border-300 rounded-md" id="totalweek" name="totalweek">
+        <label for="totalweeks">Total Weeks:</label>
+        <input v-on:input="inputChange" type="text" class="w-3/5 border border-300 rounded-md" id="totalweek" name="totalweek">
     </div>
 
     <div class="flex justify-between sm-container mx-auto w-1/5">
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button @click="calculate" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Calculate
         </button>
 
-        <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+        <button @click="reset" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
             Reset
         </button>
 
     </div>
 
-    <div class="flex flex-col justify-center sm-container mx-auto w-3/5">
-        <h2 class="text-3xl">Calculation Results</h2>
-        <h4>This semester, you may skip {{ coursename }} hours of classes.</h4>
+    <div v-show="totalSkippableHours" class="flex flex-col justify-center sm-container mx-auto w-3/5">
+        <h2 class="text-3xl">Calculated Results</h2>
+        <h4 class="text-lg">This semester, you may skip {{ coursename }}'s {{ totalSkippableHours }} hours of classes.</h4>
+        <div>
+            <p>Which equals to:</p>
+            <h3 v-show="lecturehours && totalSkippableHours" class="text-xl text-sky-500">{{ totalSkippableHours / lecturehours | 0 }} times of lecture classes OR</h3> 
+            <h3 v-show="tutorialhours  && totalSkippableHours" class="text-xl text-sky-500">{{ totalSkippableHours / tutorialhours | 0 }} times of tutorial classes OR</h3> 
+            <h3 v-show="practicalhours && totalSkippableHours" class="text-xl text-sky-500">{{ totalSkippableHours / practicalhours | 0 }} times of practical classes</h3>
+            
+        </div>
     </div>
 
 
@@ -70,14 +77,46 @@
 
 </style>
 
-<script setup lang="ts">
-    export default {
-        props: {
-            coursename: {
-                type: String,
-                required: true
-            }
-        },
+<script lang="ts">
+    import { defineComponent } from 'vue';
 
+    interface Props {
+        coursename: string;
+        lecturehours: number;
+        tutorialhours: number;
+        practicalhours: number;
+        totalweeks: number;
+        totalSkippableHours: number;
     }
+
+    export default defineComponent({
+        name: 'CourseHourCalculator',
+        props: {
+            coursename: String,
+            lecturehours: Number,
+            tutorialhours: Number,
+            practicalhours: Number,
+            totalweeks: Number,
+            totalSkippableHours: Number,
+        } as undefined as Props, // Cast props as the Props interface
+        methods: {
+            inputChange($event: Event) {
+                this.$emit('inputChange', $event.target);
+            },
+            reset() {
+                this.$emit('reset', null);
+
+                // Clear out input values in the DOM
+                const inputs = document.querySelectorAll('input');
+                inputs.forEach(input => input.value = '');
+            },
+            calculate() {
+                console.log('Calculate');
+                
+                this.$emit('calculate', null);
+            },
+        },
+        emits: ['inputChange', 'reset', 'calculate'],
+    });
+
 </script>
