@@ -55,7 +55,7 @@ export default defineComponent({
       this.totalSkippableHours = 0;
     },
     calculate() {
-      this.totalSkippableHours = (this.lecturehours + this.tutorialhours + this.practicalhours) * this.totalweeks;
+      this.totalSkippableHours = (this.lecturehours + this.tutorialhours + this.practicalhours) * this.totalweeks * 0.2;
     },
   },
 });
